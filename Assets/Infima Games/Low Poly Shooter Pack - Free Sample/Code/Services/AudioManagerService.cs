@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Audio;
 
 namespace InfimaGames.LowPolyShooterPack
 {
@@ -27,7 +28,7 @@ namespace InfimaGames.LowPolyShooterPack
             /// Delay.
             /// </summary>
             public float Delay { get; }
-            
+
             /// <summary>
             /// Constructor.
             /// </summary>
@@ -47,12 +48,18 @@ namespace InfimaGames.LowPolyShooterPack
         /// </summary>
         private IEnumerator DestroySourceWhenFinished(AudioSource source)
         {
-            //Wait for the audio source to complete playing the clip.
-            yield return new WaitWhile(() => source.isPlaying);
-            
-            //Destroy the audio game object, since we're not using it anymore.
-            //This isn't really too great for performance, but it works, for now.
-            DestroyImmediate(source.gameObject);
+            // Wait for the audio source to complete playing the clip.
+            // Önce objenin hala var olup olmadığını (!= null) kontrol ediyoruz
+            yield return new WaitWhile(() => source != null && source.isPlaying);
+
+            // Eğer obje sahne yenilenmesi gibi bir sebeple zaten yok olduysa, alt satırı atla!
+            // Sadece obje hala hayattaysa onu yok et.
+            if (source != null)
+            {
+                //Destroy the audio game object, since we're not using it anymore.
+                //This isn't really too great for performance, but it works, for now.
+                DestroyImmediate(source.gameObject);
+            }
         }
 
         /// <summary>
@@ -65,7 +72,7 @@ namespace InfimaGames.LowPolyShooterPack
             //Play.
             PlayOneShot_Internal(value.Clip, value.Settings);
         }
-        
+
         /// <summary>
         /// Internal PlayOneShot. Basically does the whole function's name!
         /// </summary>
@@ -74,7 +81,7 @@ namespace InfimaGames.LowPolyShooterPack
             //No need to do absolutely anything if the clip is null.
             if (clip == null)
                 return;
-            
+
             //Spawn a game object for the audio source.
             var newSourceObject = new GameObject($"Audio Source -> {clip.name}");
             //Add an audio source component to that object.
@@ -84,12 +91,12 @@ namespace InfimaGames.LowPolyShooterPack
             newAudioSource.volume = settings.Volume;
             //Set spatial blend.
             newAudioSource.spatialBlend = settings.SpatialBlend;
-            
+
             //Play the clip!
             newAudioSource.PlayOneShot(clip);
-            
+
             //Start a coroutine that will destroy the whole object once it is done!
-            if(settings.AutomaticCleanup)
+            if (settings.AutomaticCleanup)
                 StartCoroutine(nameof(DestroySourceWhenFinished), newAudioSource);
         }
 

@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 28
-  productGUID: 59fe1e450aaf4a7499d02a8f30d30451
+  productGUID: 94ac30ca65ef74d48b4f9f82b55047e8
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -760,7 +760,7 @@ PlayerSettings:
   cloudProjectId: d36cd36c-398d-4915-83ba-d66dc2bd8199
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: 
+  projectName: DOT2002_KeciorenStudios1
   organizationId: fatihdagli19
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
