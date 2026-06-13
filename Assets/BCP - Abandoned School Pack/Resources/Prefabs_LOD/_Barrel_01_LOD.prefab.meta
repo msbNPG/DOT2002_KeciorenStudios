@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 8809e537cf6b8814da161598a83366cc
+timeCreated: 1498146310
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Prefabs_LOD/_Barrel_01_LOD.prefab
+  uploadId: 205276

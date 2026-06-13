@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 0c07faa0ee3117d4ab7bce987f0ad149
+timeCreated: 1498330546
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Prefabs/_Armchair_1.prefab
+  uploadId: 205276

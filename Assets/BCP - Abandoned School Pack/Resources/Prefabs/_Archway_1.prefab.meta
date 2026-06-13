@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 22f60e467c597a345aada8a7486f15c2
+timeCreated: 1498076629
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Prefabs/_Archway_1.prefab
+  uploadId: 205276

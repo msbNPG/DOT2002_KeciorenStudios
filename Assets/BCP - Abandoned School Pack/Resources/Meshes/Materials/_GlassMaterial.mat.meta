@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 1656def2ff5ccf34288f8d3f05644033
+timeCreated: 1498776610
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Meshes/Materials/_GlassMaterial.mat
+  uploadId: 205276

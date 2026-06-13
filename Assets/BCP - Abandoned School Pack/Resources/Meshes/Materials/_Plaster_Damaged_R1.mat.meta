@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 190943155d3a2c84cb008cd1baf111d1
+timeCreated: 1503831407
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Meshes/Materials/_Plaster_Damaged_R1.mat
+  uploadId: 205276

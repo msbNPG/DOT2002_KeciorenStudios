@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 0ade137d69f931142b716f69bc976490
+timeCreated: 1497996533
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Meshes/Materials/_ConcreteBare_0024.mat
+  uploadId: 205276

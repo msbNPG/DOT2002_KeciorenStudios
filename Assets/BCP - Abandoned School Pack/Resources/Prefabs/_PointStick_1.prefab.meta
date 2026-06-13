@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 422cbbf187bffca4b8085b2c0515b1a8
+timeCreated: 1498334662
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Prefabs/_PointStick_1.prefab
+  uploadId: 205276
