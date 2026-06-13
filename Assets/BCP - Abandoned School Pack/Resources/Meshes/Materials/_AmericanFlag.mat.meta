@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 4ac087c5f57dcb4429cb7759a793ff46
+timeCreated: 1498340664
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Meshes/Materials/_AmericanFlag.mat
+  uploadId: 205276

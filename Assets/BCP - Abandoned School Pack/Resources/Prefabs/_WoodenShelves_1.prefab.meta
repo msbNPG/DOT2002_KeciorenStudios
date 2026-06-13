@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: a622143429120d442bc3e0bfee4df378
+timeCreated: 1503942146
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Prefabs/_WoodenShelves_1.prefab
+  uploadId: 205276

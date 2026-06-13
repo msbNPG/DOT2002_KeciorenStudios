@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 6ef4abfe9e3c60b4bb5c57da76a4b448
+timeCreated: 1504024861
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Meshes/Materials/_ConcreteFloorsDamaged_0048.mat
+  uploadId: 205276

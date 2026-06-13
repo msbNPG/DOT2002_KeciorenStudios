@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 8c4d91818c709824d95a1bd21dfdb0db
+timeCreated: 1505581233
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Prefabs/_Carpet_01.prefab
+  uploadId: 205276
