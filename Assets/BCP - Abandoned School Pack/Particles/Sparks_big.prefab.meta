@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 6cc5590c3bf4b1046a7efcb1c72c33e1
+timeCreated: 1503834928
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Particles/Sparks_big.prefab
+  uploadId: 205276

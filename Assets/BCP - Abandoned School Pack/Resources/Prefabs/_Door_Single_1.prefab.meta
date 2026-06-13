@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: aa447f528229f544d9f896a95828fe1a
+timeCreated: 1498489518
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Prefabs/_Door_Single_1.prefab
+  uploadId: 205276

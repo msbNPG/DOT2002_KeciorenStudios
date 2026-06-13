@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: ffd26fca3ba6e1a41981616eb1d597cd
+timeCreated: 1498076788
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Meshes/Materials/_TrashPaper_5.mat
+  uploadId: 205276

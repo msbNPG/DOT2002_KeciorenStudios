@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: d0473a8fd67001b41a7bfaf353f03dbe
+timeCreated: 1498419357
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Prefabs/_Classroom_1_2.prefab
+  uploadId: 205276

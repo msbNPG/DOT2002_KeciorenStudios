@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f46f108f92c92fd448f4ff082f5e1893
+timeCreated: 1505598598
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Meshes/Materials/_WoodPlanksBare_0474.mat
+  uploadId: 205276

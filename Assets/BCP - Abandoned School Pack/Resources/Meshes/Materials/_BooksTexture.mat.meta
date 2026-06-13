@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 096baecb41aa70947bacb2d6e863a0b0
+timeCreated: 1504447909
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Meshes/Materials/_BooksTexture.mat
+  uploadId: 205276
