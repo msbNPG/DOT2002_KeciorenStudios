@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 5ac1397cef505da40852dbaeb51e21ed
+timeCreated: 1503945242
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Meshes/Materials/_BlueMetalGalvanized_0022.mat
+  uploadId: 205276

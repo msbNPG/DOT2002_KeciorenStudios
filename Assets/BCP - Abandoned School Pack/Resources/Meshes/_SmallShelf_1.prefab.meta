@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 06f1d505a68e9454399bc6df28757c2b
+timeCreated: 1498777707
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Meshes/_SmallShelf_1.prefab
+  uploadId: 205276
