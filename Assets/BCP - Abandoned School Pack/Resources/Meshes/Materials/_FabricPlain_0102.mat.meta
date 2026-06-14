@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 54eb6cb604ead364a8ce8c216a9ba0e1
+timeCreated: 1498330470
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Meshes/Materials/_FabricPlain_0102.mat
+  uploadId: 205276

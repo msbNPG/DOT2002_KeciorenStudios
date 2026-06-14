@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f222d1da6b6f5c94683a6197ddf8554c
+timeCreated: 1498052566
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Meshes/Materials/_MetalPainted_0121_1_LA.mat
+  uploadId: 205276

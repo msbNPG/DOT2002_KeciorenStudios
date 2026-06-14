@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 212850ce273d570458dfa25ab4506a7c
+timeCreated: 1498080308
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102256
+  packageName: BCP - Abandoned School Pack
+  packageVersion: 1.0
+  assetPath: Assets/BCP - Abandoned School Pack/Resources/Meshes/Materials/_Plywood0080_6.mat
+  uploadId: 205276
