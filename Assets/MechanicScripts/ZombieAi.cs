@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.AI;
 using InfimaGames.LowPolyShooterPack;
 
@@ -96,8 +96,21 @@ public class ZombieAI : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         
-        agent.speed = moveSpeed;
-        startPosition = transform.position;
+        if (agent != null)
+        {
+            agent.speed = moveSpeed;
+            startPosition = transform.position;
+
+            // NavMesh uzerinde degilse en yakin NavMesh noktasina oturt
+            if (!agent.isOnNavMesh)
+            {
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(transform.position, out hit, 15f, NavMesh.AllAreas))
+                {
+                    agent.Warp(hit.position);
+                }
+            }
+        }
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null) 
@@ -135,6 +148,7 @@ public class ZombieAI : MonoBehaviour
     void Update()
     {
         if (isDead || player == null) return;
+        if (agent == null || !agent.isOnNavMesh) return;
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
@@ -178,6 +192,7 @@ public class ZombieAI : MonoBehaviour
 
     void UpdatePatrol()
     {
+        if (agent == null || !agent.isOnNavMesh) return;
         agent.isStopped = false;
         // Yavas yurume hizi
         agent.speed = moveSpeed * 0.5f; 
@@ -199,6 +214,7 @@ public class ZombieAI : MonoBehaviour
 
     void SetRandomPatrolDestination()
     {
+        if (agent == null || !agent.isOnNavMesh) return;
         Vector3 randomDirection = Random.insideUnitSphere * patrolRadius;
         randomDirection += startPosition;
         NavMeshHit hit;
@@ -213,6 +229,7 @@ public class ZombieAI : MonoBehaviour
 
     void UpdateChase()
     {
+        if (agent == null || !agent.isOnNavMesh) return;
         agent.isStopped = false;
         // Tam kosma hizi
         agent.speed = moveSpeed;
@@ -222,7 +239,7 @@ public class ZombieAI : MonoBehaviour
 
     void UpdateAttack()
     {
-        agent.isStopped = true;
+        if (agent != null && agent.isOnNavMesh) agent.isStopped = true;
         animator.SetFloat("Speed", 0f);
 
         // Yuzunu oyuncuya don
@@ -257,13 +274,22 @@ public class ZombieAI : MonoBehaviour
         if (currentHealth <= 0) Die();
     }
 
-        void Die()
+    void Die()
     {
         isDead = true;
-        agent.isStopped = true;
-        agent.enabled = false;
-        GetComponent<Collider>().enabled = false;
-        animator.SetTrigger("Die");
+        if (agent != null)
+        {
+            if (agent.isOnNavMesh)
+            {
+                agent.isStopped = true;
+            }
+            agent.enabled = false;
+        }
+
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.enabled = false;
+
+        if (animator != null) animator.SetTrigger("Die");
         
         // Istatistikleri guncelle
         if (GameManager.instance != null)

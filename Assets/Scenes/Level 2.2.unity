@@ -1840,7 +1840,6 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: a95f22faf6e88c44abae358c84940c74, type: 2}
   m_BuildHeightMesh: 0
---- !u!1001 &2052620864
 --- !u!1001 &1066730241231749893
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2825,8 +2824,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1001 &1066730241231749893
-  m_SourcePrefab: {fileID: 100100000, guid: 8ad79b6218137c24c8fa12808046e863, type: 3}
 --- !u!1001 &7093893768598713652
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10728,7 +10725,6 @@ SceneRoots:
   - {fileID: 7093893768598713652}
   - {fileID: 540883279}
   - {fileID: 663732382}
-  - {fileID: 1066730241231749893}
   - {fileID: 637058966}
   - {fileID: 1549958787}
   - {fileID: 359207565}
