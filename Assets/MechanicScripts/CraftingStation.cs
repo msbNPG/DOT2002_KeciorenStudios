@@ -1,44 +1,42 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class CraftingStation : MonoBehaviour
 {
-    private bool oyuncuYakininda = false;
+    [Header("Crafting (Asi Uretim) Merkezi")]
+    public string stationName = "Asi Istasyonu";
 
-    void Update()
+    /// <summary>
+    /// Oyuncu tarafindan Raycast (E tusu) ile tetiklenir.
+    /// PlayerInteract scriptinden cagirilir.
+    /// </summary>
+    public void Interact()
     {
-        // Oyuncu masanýn yanýndaysa ve E'ye basarsa
-        if (oyuncuYakininda && Input.GetKeyDown(KeyCode.E))
+        if (GameManager.instance == null)
         {
-            // GameManager üzerinden sayacý kontrol ediyoruz
-            if (GameManager.instance.toplananEsya >= GameManager.instance.gerekenEsya)
-            {
-                // KAZANMA DURUMU
-                Debug.Log("TEBRÝKLER! AÞIYI CRAFTLADIN VE DÜNYAYI KURTARDIN!");
-                // Birazdan buraya oyunu bitirme kodlarýný ekleyeceðiz
-            }
-            else
-            {
-                // EKSÝK EÞYA DURUMU
-                int eksik = GameManager.instance.gerekenEsya - GameManager.instance.toplananEsya;
-                Debug.Log("Aþýyý tamamlamak için " + eksik + " parçaya daha ihtiyacýn var!");
-            }
+            Debug.LogError("[CraftingStation] GameManager bulunamadi!");
+            return;
         }
-    }
 
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
+                // Toplanan parca sayisini kontrol et
+        if (GameManager.instance.toplananEsya >= GameManager.instance.gerekenEsya)
         {
-            oyuncuYakininda = true;
-            Debug.Log("Craft masasýna yaklaþtýn. Aþýyý hazýrlamak için 'E' tuþuna bas.");
+            // KAZANMA DURUMU
+            string mesaj = "TEBRIKLER! ASIYI URETTIN VE DUNYAYI KURTARDIN!";
+            Debug.Log(mesaj);
+            GameManager.instance.ShowPopupText(mesaj, Color.green);
+            
+            // GameManager uzerinden Win mantigini tetikle
+            GameManager.instance.GameWon();
         }
-    }
-
-    void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
+        else
         {
-            oyuncuYakininda = false;
+            // EKSÄ°K PARCA DURUMU
+            int eksik = GameManager.instance.gerekenEsya - GameManager.instance.toplananEsya;
+            string mesaj = "Asiyi tamamlamak icin " + eksik + " parcaya daha ihtiyacin var!";
+            Debug.Log(mesaj);
+            
+            // Ekranda goster (Kirmizi renk ile uyari)
+            GameManager.instance.ShowPopupText(mesaj, Color.red);
         }
     }
 }

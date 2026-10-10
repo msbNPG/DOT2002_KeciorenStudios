@@ -309,6 +309,19 @@ namespace InfimaGames.LowPolyShooterPack
 
 		private void PlayReloadAnimation()
 		{
+			// ENVANTER MERMI KONTROLU
+			if (InventoryManager.Instance != null)
+			{
+				int weaponIndex = inventory.GetEquippedIndex();
+				ItemType neededAmmo = (weaponIndex == 0) ? ItemType.PistolAmmo : ItemType.RifleAmmo;
+				
+				if (!InventoryManager.Instance.HasItem(neededAmmo, 1))
+				{
+					UnityEngine.Debug.Log("Envanterde yeterli mermi yok! Reload iptal.");
+					return; // Mermi yoksa animasyonu iptal et
+				}
+			}
+
 			#region Animation
 
 			//Get the name of the animation state to play, which depends on weapon settings, and ammunition!
@@ -386,6 +399,12 @@ namespace InfimaGames.LowPolyShooterPack
 		/// <summary>
 		/// Updates the cursor state based on the value of the cursorLocked variable.
 		/// </summary>
+		public void SetCursorLock(bool locked)
+		{
+			cursorLocked = locked;
+			UpdateCursorState();
+		}
+
 		private void UpdateCursorState()
 		{
 			//Update cursor visibility.
@@ -815,6 +834,19 @@ namespace InfimaGames.LowPolyShooterPack
 		}
 		public override void FillAmmunition(int amount)
 		{
+			// ENVANTER ENTEGRASYONU: Mermiyi envanterden dus
+			if (InventoryManager.Instance != null && equippedWeapon != null)
+			{
+				int weaponIndex = inventory.GetEquippedIndex();
+				ItemType neededAmmo = (weaponIndex == 0) ? ItemType.PistolAmmo : ItemType.RifleAmmo;
+				
+				if (!InventoryManager.Instance.ConsumeAmmo(neededAmmo, 1))
+				{
+					UnityEngine.Debug.Log("Envanterde mermi bitti, sarjor doldurulamadi!");
+					return;
+				}
+			}
+
 			//Notify the weapon to fill the ammunition by the amount.
 			if(equippedWeapon != null)
 				equippedWeapon.FillAmmunition(amount);
