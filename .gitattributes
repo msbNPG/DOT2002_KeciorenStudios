@@ -1,0 +1,55 @@
+# Unity standard gitattributes
+# Handle line endings automatically for files detected as text
+# and leave all binary files untouched.
+
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Unity YAML and text files
+*.cs text diff=csharp
+*.cginc text
+*.shader text
+*.mat text merge=unityyamlmerge
+*.anim text merge=unityyamlmerge
+*.unity text merge=unityyamlmerge
+*.prefab text merge=unityyamlmerge
+*.physicsMaterial2D text merge=unityyamlmerge
+*.physicsMaterial text merge=unityyamlmerge
+*.asset text merge=unityyamlmerge
+*.meta text merge=unityyamlmerge
+*.controller text merge=unityyamlmerge
+*.json text
+*.txt text
+*.md text
+*.xml text
+*.html text
+*.css text
+*.js text
+
+# Unity binary files
+*.dds binary
+*.psd binary
+*.tga binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.hdr binary
+*.exr binary
+*.tif binary
+*.tiff binary
+*.fbx binary
+*.obj binary
+*.dae binary
+*.3ds binary
+*.dxf binary
+*.blend binary
+*.wav binary
+*.mp3 binary
+*.ogg binary
+*.aif binary
+*.aiff binary
+*.ttf binary
+*.otf binary
+*.dll binary
+*.so binary
+*.bundle binary
