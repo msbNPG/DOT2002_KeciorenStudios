@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class ProjectileScript : MonoBehaviour {
@@ -159,13 +159,6 @@ public class ProjectileScript : MonoBehaviour {
 			//Toggle the isHit bool on the target object
 			collision.gameObject.transform.gameObject.GetComponent
 				<TargetScript>().isHit = true;
-		}
-
-		// ZOMBIE ENTEGRASYONU: Dorudan arpma
-		ZombieAI zombie = collision.transform.GetComponent<ZombieAI>();
-		if (zombie != null)
-		{
-			zombie.TakeDamage(50); // Mermi dorudan zombiye deerse hasar ver
 		}
 
 		//Explosion force
