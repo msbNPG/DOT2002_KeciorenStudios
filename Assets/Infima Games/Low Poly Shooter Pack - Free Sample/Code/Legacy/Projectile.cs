@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using System.Collections;
 using InfimaGames.LowPolyShooterPack;
@@ -120,6 +120,16 @@ public class Projectile : MonoBehaviour {
 			Destroy(gameObject);
 		}
 			
+		// ZOMBIE ENTEGRASYONU: Eer mermi zombiye arparsa
+		ZombieAI zombie = collision.transform.GetComponent<ZombieAI>();
+		if (zombie != null)
+		{
+			// Zombiye 25 hasar ver
+			zombie.TakeDamage(25);
+			// Zombinin iinden gememesi iin mermiyi yok et
+			Destroy(gameObject);
+		}
+
 		//If bullet collides with "ExplosiveBarrel" tag
 		if (collision.transform.tag == "ExplosiveBarrel") 
 		{

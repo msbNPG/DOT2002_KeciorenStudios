@@ -75,10 +75,16 @@ public class PT_PackageWelcomeWindow : EditorWindow
 
     static PT_PackageWelcomeWindow()
     {
+        EditorApplication.delayCall += CheckAndShowOnLoad;
+    }
+
+    private static void CheckAndShowOnLoad()
+    {
+        EditorApplication.delayCall -= CheckAndShowOnLoad;
         if (!EditorPrefs.GetBool(PrefKey, false))
         {
             LoadAssets();
-            EditorApplication.update += ShowOnLoad;
+            OpenWindow();
         }
     }
 

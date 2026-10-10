@@ -1,4 +1,4 @@
-﻿// Copyright 2021, Infima Games. All Rights Reserved.
+// Copyright 2021, Infima Games. All Rights Reserved.
 
 using UnityEngine;
 
@@ -9,8 +9,15 @@ namespace InfimaGames.LowPolyShooterPack
     /// </summary>
     public class Weapon : WeaponBehaviour
     {
+        // YENI: Zombilerin silahin sesini duyabilmesi icin olay firlatir. (Konum, DuyulmaYaricapi)
+        public static event System.Action<Vector3, float> OnGunshot;
+
         #region FIELDS SERIALIZED
         
+        [Header("AI Ses Ayarlari (Zombiler)")]
+        [Tooltip("Bu silah ateslendiginde zombilerin maksimum kac metreden duyup size kosacagini belirler.")]
+        public float gunshotLoudnessRadius = 50f;
+
         [Header("Firing")]
 
         [Tooltip("Is this weapon automatic? If yes, then holding down the firing button will continuously fire.")]
@@ -214,6 +221,9 @@ namespace InfimaGames.LowPolyShooterPack
             //Get Muzzle Socket. This is the point we fire from.
             Transform muzzleSocket = muzzleBehaviour.GetSocket();
             
+            // YENI: Silah patlama sesini tum zombilere duyur (Inspector'daki degere gore)
+            OnGunshot?.Invoke(muzzleSocket.position, gunshotLoudnessRadius);
+
             //Play the firing animation.
             const string stateName = "Fire";
             animator.Play(stateName, 0, 0.0f);
