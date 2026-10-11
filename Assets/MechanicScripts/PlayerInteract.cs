@@ -15,6 +15,9 @@ public class PlayerInteract : MonoBehaviour
     [Header("UI Referanslari")]
     public Text interactPromptText;
 
+    [Tooltip("Atanirsa yazi yerine bu kutu (tus simgesi + yazi) acilip kapanir")]
+    public GameObject interactPromptRoot;
+
     private Camera mainCamera;
 
     void Start()
@@ -29,7 +32,7 @@ public class PlayerInteract : MonoBehaviour
         // Inspector'dan atanmamissa sahnede ara
         if (interactPromptText == null)
         {
-            var allTexts = FindObjectsByType<Text>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var allTexts = FindObjectsByType<Text>(FindObjectsInactive.Include);
             foreach (var t in allTexts)
             {
                 if (t.gameObject.name == "InteractPromptText")
@@ -69,11 +72,11 @@ public class PlayerInteract : MonoBehaviour
             }
         }
 
-        if (interactPromptText != null)
-        {
-            interactPromptText.enabled = false;
-        }
+        HidePrompt();
     }
+
+    // Kutunun kendi [E] tus simgesi varsa yaziya ayrica [E] ekleme
+    private string KeyPrefix => interactPromptRoot != null ? "" : "[E] ";
 
     void Update()
     {
@@ -106,7 +109,7 @@ public class PlayerInteract : MonoBehaviour
             InteractableItem item = hit.collider.GetComponent<InteractableItem>();
             if (item != null && hit.distance <= item.interactDistance)
             {
-                ShowPrompt("[E] " + item.itemName);
+                ShowPrompt(KeyPrefix + "Topla: " + item.itemName);
 
                 if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                 {
@@ -119,7 +122,7 @@ public class PlayerInteract : MonoBehaviour
             CraftingStation station = hit.collider.GetComponent<CraftingStation>();
             if (station != null && hit.distance <= defaultInteractRange)
             {
-                ShowPrompt("[E] " + station.stationName);
+                ShowPrompt(KeyPrefix + "Kullan: " + station.stationName);
 
                 if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                 {
@@ -139,6 +142,10 @@ public class PlayerInteract : MonoBehaviour
             interactPromptText.text = text;
             interactPromptText.enabled = true;
         }
+        if (interactPromptRoot != null && !interactPromptRoot.activeSelf)
+        {
+            interactPromptRoot.SetActive(true);
+        }
     }
 
     private void HidePrompt()
@@ -146,6 +153,10 @@ public class PlayerInteract : MonoBehaviour
         if (interactPromptText != null)
         {
             interactPromptText.enabled = false;
+        }
+        if (interactPromptRoot != null && interactPromptRoot.activeSelf)
+        {
+            interactPromptRoot.SetActive(false);
         }
     }
 }

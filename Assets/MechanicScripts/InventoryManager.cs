@@ -16,8 +16,8 @@ public enum ItemType
 }
 
 /// <summary>
-/// Oyuncunun eÃƒâ€¦Ã…Â¸ya envanterini yÃƒÆ’Ã‚Â¶netir (yiyecek, iÃƒÆ’Ã‚Â§ecek, mermi, makine parÃƒÆ’Ã‚Â§asÃƒâ€Ã‚Â±).
-/// LPSP silah envanteri ile karÃƒâ€Ã‚Â±Ãƒâ€¦Ã…Â¸tÃƒâ€Ã‚Â±rÃƒâ€Ã‚Â±lmamalÃƒâ€Ã‚Â±dÃƒâ€Ã‚Â±r.
+/// Oyuncunun eşya envanterini yönetir (yiyecek, içecek, mermi, makine parçası).
+/// LPSP silah envanteri ile karıştırılmamalıdır.
 /// </summary>
 /// <summary>
 /// Envanterdeki tek bir esya yiginini temsil eder.
@@ -47,10 +47,10 @@ public class InventoryManager : MonoBehaviour
     public static InventoryManager Instance { get; private set; }
 
 
-    // ==================== Veri SÃƒâ€Ã‚Â±nÃƒâ€Ã‚Â±flarÃƒâ€Ã‚Â± ====================
+    // ==================== Veri Sınıfları ====================
 
     /// <summary>
-    /// Envanterdeki tek bir eÃƒâ€¦Ã…Â¸ya yÃƒâ€Ã‚Â±Ãƒâ€Ã…Â¸Ãƒâ€Ã‚Â±nÃƒâ€Ã‚Â±nÃƒâ€Ã‚Â± temsil eder.
+    /// Envanterdeki tek bir eşya yığınını temsil eder.
     /// </summary>
 
 
@@ -65,7 +65,7 @@ public class InventoryManager : MonoBehaviour
     public List<InventoryItem> items = new List<InventoryItem>();
 
     [Header("Asi Parcalari (Kazanma Kosulu)")]
-    [Tooltip("Makine parÃƒÆ’Ã‚Â§alarÃƒâ€Ã‚Â± iÃƒÆ’Ã‚Â§in ayrÃƒâ€Ã‚Â± liste. Maksimum 5 slot.")]
+    [Tooltip("Makine parçaları için ayrı liste. Maksimum 5 slot.")]
     public List<InventoryItem> machineParts = new List<InventoryItem>();
 
     // ==================== Kapasite Sabitleri ====================
@@ -79,8 +79,8 @@ public class InventoryManager : MonoBehaviour
 
         InventoryItem item = items[index];
 
-        // 1. Sahneye prefab firlat
-        SpawnDropPrefab(item);
+        // 1. Sahneye prefab firlat. Prefab yoksa esyayi silme, envanterde kalsin.
+        if (!SpawnDropPrefab(item)) return;
 
         // 2. Envanterden 1 adet dusur
         item.count--;
@@ -92,7 +92,7 @@ public class InventoryManager : MonoBehaviour
         onInventoryChanged?.Invoke();
     }
 
-    private void SpawnDropPrefab(InventoryItem item)
+    private bool SpawnDropPrefab(InventoryItem item)
     {
         GameObject prefabToSpawn = null;
         foreach (var prefab in dropPrefabs)
@@ -130,32 +130,34 @@ public class InventoryManager : MonoBehaviour
                     rb = dropped.AddComponent<Rigidbody>();
                     rb.AddForce(playerTr.forward * 4f, ForceMode.Impulse);
                 }
+                return true;
             }
         }
         else
         {
             Debug.LogWarning("[InventoryManager] Drop prefab bulunamadi: " + item.itemName + ". Lutfen Inspector'dan 'Drop Prefabs' listesine bu esyanin 3D modelini ekleyin!");
         }
+        return false;
     }
 
     /// <summary>
-    /// Ana envanter Ãƒâ€Ã‚Â±zgarasÃƒâ€Ã‚Â±nÃƒâ€Ã‚Â±n maksimum slot sayÃƒâ€Ã‚Â±sÃƒâ€Ã‚Â±.
+    /// Ana envanter ızgarasının maksimum slot sayısı.
     /// </summary>
     private const int MAX_ITEMS_CAPACITY = 9;
 
     /// <summary>
-    /// Makine parÃƒÆ’Ã‚Â§alarÃƒâ€Ã‚Â± listesinin maksimum slot sayÃƒâ€Ã‚Â±sÃƒâ€Ã‚Â±.
+    /// Makine parçaları listesinin maksimum slot sayısı.
     /// </summary>
     private const int MAX_MACHINE_PARTS_CAPACITY = 5;
 
     // ==================== Olaylar ====================
 
     /// <summary>
-    /// Envanter her deÃƒâ€Ã…Â¸iÃƒâ€¦Ã…Â¸tiÃƒâ€Ã…Â¸inde tetiklenir. UI gÃƒÆ’Ã‚Â¼ncelleme iÃƒÆ’Ã‚Â§in kullanÃƒâ€Ã‚Â±lÃƒâ€Ã‚Â±r.
+    /// Envanter her değiştiğinde tetiklenir. UI güncelleme için kullanılır.
     /// </summary>
     public Action onInventoryChanged;
 
-    // ==================== YaÃƒâ€¦Ã…Â¸am DÃƒÆ’Ã‚Â¶ngÃƒÆ’Ã‚Â¼sÃƒÆ’Ã‚Â¼ ====================
+    // ==================== Yaşam Döngüsü ====================
 
     private void Awake()
     {
@@ -172,50 +174,52 @@ public class InventoryManager : MonoBehaviour
 
     private void Start()
     {
-        // BaÃƒâ€¦Ã…Â¸langÃƒâ€Ã‚Â±ÃƒÆ’Ã‚Â§ eÃƒâ€¦Ã…Â¸yalarÃƒâ€Ã‚Â±: 1 tabanca mermisi ve 1 tÃƒÆ’Ã‚Â¼fek mermisi
+        // Başlangıç eşyaları: 1 tabanca mermisi ve 1 tüfek mermisi
         AddItem(ItemType.PistolAmmo, "Tabanca Mermisi", null, 1);
-        AddItem(ItemType.RifleAmmo, "TÃƒÆ’Ã‚Â¼fek Mermisi", null, 1);
+        AddItem(ItemType.RifleAmmo, "Tüfek Mermisi", null, 1);
     }
 
-    // ==================== Genel YÃƒÆ’Ã‚Â¶ntemler ====================
+    // ==================== Genel Yöntemler ====================
 
     /// <summary>
-    /// Envantere eÃƒâ€¦Ã…Â¸ya ekler. AynÃƒâ€Ã‚Â± tÃƒÆ’Ã‚Â¼rde eÃƒâ€¦Ã…Â¸ya varsa sayÃƒâ€Ã‚Â±sÃƒâ€Ã‚Â±nÃƒâ€Ã‚Â± artÃƒâ€Ã‚Â±rÃƒâ€Ã‚Â±r.
-    /// Yeni eÃƒâ€¦Ã…Â¸ya ise listeye ekler. Envanter doluysa false dÃƒÆ’Ã‚Â¶ner.
+    /// Envantere eşya ekler. Aynı türde eşya varsa sayısını artırır.
+    /// Yeni eşya ise listeye ekler. Envanter doluysa false döner.
     /// </summary>
-    /// <param name="type">Eklenecek eÃƒâ€¦Ã…Â¸ya tÃƒÆ’Ã‚Â¼rÃƒÆ’Ã‚Â¼.</param>
-    /// <param name="name">EÃƒâ€¦Ã…Â¸yanÃƒâ€Ã‚Â±n gÃƒÆ’Ã‚Â¶rÃƒÆ’Ã‚Â¼nen adÃƒâ€Ã‚Â±.</param>
-    /// <param name="icon">EÃƒâ€¦Ã…Â¸yanÃƒâ€Ã‚Â±n UI ikonu.</param>
+    /// <param name="type">Eklenecek eşya türü.</param>
+    /// <param name="name">Eşyanın görünen adı.</param>
+    /// <param name="icon">Eşyanın UI ikonu.</param>
     /// <param name="amount">Eklenecek miktar.</param>
-    /// <returns>Ekleme baÃƒâ€¦Ã…Â¸arÃƒâ€Ã‚Â±lÃƒâ€Ã‚Â±ysa true, envanter doluysa false.</returns>
+    /// <returns>Ekleme başarılıysa true, envanter doluysa false.</returns>
     public bool AddItem(ItemType type, string name, Sprite icon, int amount = 1, int restoreValue = 25)
     {
-        // Makine parÃƒÂ§alarÃ„Â± ayrÃ„Â± listeye yÃƒÂ¶nlendirilir
+        // Makine parçaları ayrı listeye yönlendirilir
         if (type == ItemType.MachinePart)
         {
             return AddMachinePart(name, icon, amount);
         }
 
-        // Ana envanterde aynÃƒâ€Ã‚Â± tÃƒÆ’Ã‚Â¼rde eÃƒâ€¦Ã…Â¸ya var mÃƒâ€Ã‚Â± kontrol et
+        // Ana envanterde aynı türde eşya var mı kontrol et
         InventoryItem existing = FindItemByType(items, type);
 
         if (existing != null)
         {
-            // Mevcut eÃƒâ€¦Ã…Â¸yanÃƒâ€Ã‚Â±n sayÃƒâ€Ã‚Â±sÃƒâ€Ã‚Â±nÃƒâ€Ã‚Â± artÃƒâ€Ã‚Â±r
+            // Mevcut eşyanın sayısını artır
             existing.count += amount;
+            // Baslangic esyalari ikonsuz eklenir; ilk ikonlu esya geldiginde ikonu devral
+            if (existing.icon == null && icon != null) existing.icon = icon;
             Debug.Log($"[InventoryManager] '{existing.itemName}' sayisi artirildi: {existing.count}");
             onInventoryChanged?.Invoke();
             return true;
         }
 
-        // Yeni eÃƒâ€¦Ã…Â¸ya eklenecek, kapasite kontrolÃƒÆ’Ã‚Â¼
+        // Yeni eşya eklenecek, kapasite kontrolü
         if (items.Count >= MAX_ITEMS_CAPACITY)
         {
             Debug.LogWarning("[InventoryManager] Ana envanter dolu! Esya eklenemedi: " + name);
             return false;
         }
 
-        // Yeni eÃƒâ€¦Ã…Â¸ya iÃƒÆ’Ã‚Â§in InventoryItem oluÃƒâ€¦Ã…Â¸tur
+        // Yeni eşya için InventoryItem oluştur
         InventoryItem newItem = new InventoryItem(type, name, icon, amount, restoreValue);
         items.Add(newItem);
         Debug.Log($"[InventoryManager] Yeni esya eklendi: '{name}' x{amount}");
@@ -224,15 +228,15 @@ public class InventoryManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Envanterden belirtilen tÃƒÆ’Ã‚Â¼rde eÃƒâ€¦Ã…Â¸ya ÃƒÆ’Ã‚Â§Ãƒâ€Ã‚Â±karÃƒâ€Ã‚Â±r.
-    /// Yeterli eÃƒâ€¦Ã…Â¸ya yoksa false dÃƒÆ’Ã‚Â¶ner.
+    /// Envanterden belirtilen türde eşya çıkarır.
+    /// Yeterli eşya yoksa false döner.
     /// </summary>
-    /// <param name="type">ÃƒÆ’Ã¢â‚¬Â¡Ãƒâ€Ã‚Â±karÃƒâ€Ã‚Â±lacak eÃƒâ€¦Ã…Â¸ya tÃƒÆ’Ã‚Â¼rÃƒÆ’Ã‚Â¼.</param>
-    /// <param name="amount">ÃƒÆ’Ã¢â‚¬Â¡Ãƒâ€Ã‚Â±karÃƒâ€Ã‚Â±lacak miktar.</param>
-    /// <returns>ÃƒÆ’Ã¢â‚¬Â¡Ãƒâ€Ã‚Â±karma baÃƒâ€¦Ã…Â¸arÃƒâ€Ã‚Â±lÃƒâ€Ã‚Â±ysa true, yeterli eÃƒâ€¦Ã…Â¸ya yoksa false.</returns>
+    /// <param name="type">Çıkarılacak eşya türü.</param>
+    /// <param name="amount">Çıkarılacak miktar.</param>
+    /// <returns>Çıkarma başarılıysa true, yeterli eşya yoksa false.</returns>
     public bool RemoveItem(ItemType type, int amount = 1)
     {
-        // Makine parÃƒÆ’Ã‚Â§alarÃƒâ€Ã‚Â± ayrÃƒâ€Ã‚Â± listeden ÃƒÆ’Ã‚Â§Ãƒâ€Ã‚Â±karÃƒâ€Ã‚Â±lÃƒâ€Ã‚Â±r
+        // Makine parçaları ayrı listeden çıkarılır
         if (type == ItemType.MachinePart)
         {
             return RemoveMachinePart(amount);
@@ -248,7 +252,7 @@ public class InventoryManager : MonoBehaviour
 
         existing.count -= amount;
 
-        // SayÃƒâ€Ã‚Â± sÃƒâ€Ã‚Â±fÃƒâ€Ã‚Â±ra dÃƒÆ’Ã‚Â¼Ãƒâ€¦Ã…Â¸erse eÃƒâ€¦Ã…Â¸yayÃƒâ€Ã‚Â± listeden kaldÃƒâ€Ã‚Â±r
+        // Sayı sıfıra düşerse eşyayı listeden kaldır
         if (existing.count <= 0)
         {
             items.Remove(existing);
@@ -264,13 +268,13 @@ public class InventoryManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Belirtilen tÃƒÆ’Ã‚Â¼rdeki eÃƒâ€¦Ã…Â¸yanÃƒâ€Ã‚Â±n toplam sayÃƒâ€Ã‚Â±sÃƒâ€Ã‚Â±nÃƒâ€Ã‚Â± dÃƒÆ’Ã‚Â¶ndÃƒÆ’Ã‚Â¼rÃƒÆ’Ã‚Â¼r.
+    /// Belirtilen türdeki eşyanın toplam sayısını döndürür.
     /// </summary>
-    /// <param name="type">Sorgulanacak eÃƒâ€¦Ã…Â¸ya tÃƒÆ’Ã‚Â¼rÃƒÆ’Ã‚Â¼.</param>
-    /// <returns>EÃƒâ€¦Ã…Â¸ya sayÃƒâ€Ã‚Â±sÃƒâ€Ã‚Â±. EÃƒâ€¦Ã…Â¸ya yoksa 0.</returns>
+    /// <param name="type">Sorgulanacak eşya türü.</param>
+    /// <returns>Eşya sayısı. Eşya yoksa 0.</returns>
     public int GetItemCount(ItemType type)
     {
-        // Makine parÃƒÆ’Ã‚Â§alarÃƒâ€Ã‚Â± ayrÃƒâ€Ã‚Â± listeden sorgulanÃƒâ€Ã‚Â±r
+        // Makine parçaları ayrı listeden sorgulanır
         if (type == ItemType.MachinePart)
         {
             return GetMachinePartCount();
@@ -281,22 +285,22 @@ public class InventoryManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Oyuncunun belirtilen tÃƒÆ’Ã‚Â¼rde yeterli eÃƒâ€¦Ã…Â¸yasÃƒâ€Ã‚Â± olup olmadÃƒâ€Ã‚Â±Ãƒâ€Ã…Â¸Ãƒâ€Ã‚Â±nÃƒâ€Ã‚Â± kontrol eder.
+    /// Oyuncunun belirtilen türde yeterli eşyası olup olmadığını kontrol eder.
     /// </summary>
-    /// <param name="type">Kontrol edilecek eÃƒâ€¦Ã…Â¸ya tÃƒÆ’Ã‚Â¼rÃƒÆ’Ã‚Â¼.</param>
+    /// <param name="type">Kontrol edilecek eşya türü.</param>
     /// <param name="amount">Gereken minimum miktar.</param>
-    /// <returns>Yeterli eÃƒâ€¦Ã…Â¸ya varsa true.</returns>
+    /// <returns>Yeterli eşya varsa true.</returns>
     public bool HasItem(ItemType type, int amount = 1)
     {
         return GetItemCount(type) >= amount;
     }
 
     /// <summary>
-    /// Oyuncu bir slota tÃƒâ€Ã‚Â±kladÃƒâ€Ã‚Â±Ãƒâ€Ã…Â¸Ãƒâ€Ã‚Â±nda ÃƒÆ’Ã‚Â§aÃƒâ€Ã…Â¸rÃƒâ€Ã‚Â±lÃƒâ€Ã‚Â±r.
-    /// Yiyecek: 25 aÃƒÆ’Ã‚Â§lÃƒâ€Ã‚Â±k geri kazandÃƒâ€Ã‚Â±rÃƒâ€Ã‚Â±r. Ãƒâ€Ã‚Â°ÃƒÆ’Ã‚Â§ecek: 25 susuzluk geri kazandÃƒâ€Ã‚Â±rÃƒâ€Ã‚Â±r.
-    /// Mermi ve makine parÃƒÆ’Ã‚Â§asÃƒâ€Ã‚Â± tÃƒâ€Ã‚Â±klamayla kullanÃƒâ€Ã‚Â±lamaz.
+    /// Oyuncu bir slota tıkladığında çağrılır.
+    /// Yiyecek: 25 açlık geri kazandırır. İçecek: 25 susuzluk geri kazandırır.
+    /// Mermi ve makine parçası tıklamayla kullanılamaz.
     /// </summary>
-    /// <param name="slotIndex">TÃƒâ€Ã‚Â±klanan slotun indeksi.</param>
+    /// <param name="slotIndex">Tıklanan slotun indeksi.</param>
         public void UseMachinePart(int slotIndex)
     {
         // Makine parcalarina tiklayinca ozel bir eylem yapilmiyorsa bos birakilabilir.
@@ -305,10 +309,10 @@ public class InventoryManager : MonoBehaviour
 
     public void UseItem(int slotIndex)
     {
-        // GeÃƒÆ’Ã‚Â§ersiz indeks kontrolÃƒÆ’Ã‚Â¼
+        // Geçersiz indeks kontrolü
         if (slotIndex < 0 || slotIndex >= items.Count)
         {
-            Debug.LogWarning($"[InventoryManager] GeÃƒÆ’Ã‚Â§ersiz slot indeksi: {slotIndex}");
+            Debug.LogWarning($"[InventoryManager] Geçersiz slot indeksi: {slotIndex}");
             return;
         }
 
@@ -363,27 +367,27 @@ public class InventoryManager : MonoBehaviour
 
             case ItemType.PistolAmmo:
             case ItemType.RifleAmmo:
-                // Mermi tÃƒâ€Ã‚Â±klamayla kullanÃƒâ€Ã‚Â±lamaz. Sadece R tuÃƒâ€¦Ã…Â¸uyla yeniden doldurma sistemi ÃƒÆ’Ã‚Â¼zerinden tÃƒÆ’Ã‚Â¼ketilir.
+                // Mermi tıklamayla kullanılamaz. Sadece R tuşuyla yeniden doldurma sistemi üzerinden tüketilir.
                 Debug.Log("[InventoryManager] Mermi tiklamayla kullanilamaz. Yeniden doldurmak icin R tusunu kullanin.");
                 break;
 
             case ItemType.MachinePart:
-                // Makine parÃƒÆ’Ã‚Â§asÃƒâ€Ã‚Â± tÃƒâ€Ã‚Â±klamayla kullanÃƒâ€Ã‚Â±lamaz.
+                // Makine parçası tıklamayla kullanılamaz.
                 Debug.Log("[InventoryManager] Asi parcasi dogrudan kullanilamaz.");
                 break;
         }
     }
 
     /// <summary>
-    /// Yeniden doldurma sistemi iÃƒÆ’Ã‚Â§in mermi tÃƒÆ’Ã‚Â¼ketir.
-    /// Silah yeniden doldurulurken bu yÃƒÆ’Ã‚Â¶ntem ÃƒÆ’Ã‚Â§aÃƒâ€Ã…Â¸rÃƒâ€Ã‚Â±lÃƒâ€Ã‚Â±r.
+    /// Yeniden doldurma sistemi için mermi tüketir.
+    /// Silah yeniden doldurulurken bu yöntem çağrılır.
     /// </summary>
-    /// <param name="ammoType">TÃƒÆ’Ã‚Â¼ketilecek mermi tÃƒÆ’Ã‚Â¼rÃƒÆ’Ã‚Â¼ (PistolAmmo veya RifleAmmo).</param>
-    /// <param name="amount">TÃƒÆ’Ã‚Â¼ketilecek mermi miktarÃƒâ€Ã‚Â±.</param>
-    /// <returns>Yeterli mermi varsa ve tÃƒÆ’Ã‚Â¼ketim baÃƒâ€¦Ã…Â¸arÃƒâ€Ã‚Â±lÃƒâ€Ã‚Â±ysa true.</returns>
+    /// <param name="ammoType">Tüketilecek mermi türü (PistolAmmo veya RifleAmmo).</param>
+    /// <param name="amount">Tüketilecek mermi miktarı.</param>
+    /// <returns>Yeterli mermi varsa ve tüketim başarılıysa true.</returns>
     public bool ConsumeAmmo(ItemType ammoType, int amount)
     {
-        // Sadece mermi tÃƒÆ’Ã‚Â¼rlerinin tÃƒÆ’Ã‚Â¼ketilmesine izin ver
+        // Sadece mermi türlerinin tüketilmesine izin ver
         if (ammoType != ItemType.PistolAmmo && ammoType != ItemType.RifleAmmo)
         {
             Debug.LogWarning($"[InventoryManager] ConsumeAmmo sadece mermi turleri icin kullanilabilir. Gecersiz tur: {ammoType}");
@@ -393,19 +397,19 @@ public class InventoryManager : MonoBehaviour
         return RemoveItem(ammoType, amount);
     }
 
-    // ==================== Makine ParÃƒÆ’Ã‚Â§asÃƒâ€Ã‚Â± YÃƒÆ’Ã‚Â¶ntemleri ====================
+    // ==================== Makine Parçası Yöntemleri ====================
 
     /// <summary>
-    /// Makine parÃƒÆ’Ã‚Â§asÃƒâ€Ã‚Â±nÃƒâ€Ã‚Â± ayrÃƒâ€Ã‚Â± listeye ekler.
-    /// Ekleme baÃƒâ€¦Ã…Â¸arÃƒâ€Ã‚Â±lÃƒâ€Ã‚Â± olursa GameManager ÃƒÆ’Ã‚Â¼zerinden EsyaToplandi() ÃƒÆ’Ã‚Â§aÃƒâ€Ã…Â¸rÃƒâ€Ã‚Â±lÃƒâ€Ã‚Â±r.
+    /// Makine parçasını ayrı listeye ekler.
+    /// Ekleme başarılı olursa GameManager üzerinden EsyaToplandi() çağrılır.
     /// </summary>
-    /// <param name="name">ParÃƒÆ’Ã‚Â§anÃƒâ€Ã‚Â±n adÃƒâ€Ã‚Â±.</param>
-    /// <param name="icon">ParÃƒÆ’Ã‚Â§anÃƒâ€Ã‚Â±n UI ikonu.</param>
+    /// <param name="name">Parçanın adı.</param>
+    /// <param name="icon">Parçanın UI ikonu.</param>
     /// <param name="amount">Eklenecek miktar.</param>
-    /// <returns>Ekleme baÃƒâ€¦Ã…Â¸arÃƒâ€Ã‚Â±lÃƒâ€Ã‚Â±ysa true.</returns>
+    /// <returns>Ekleme başarılıysa true.</returns>
     private bool AddMachinePart(string name, Sprite icon, int amount)
     {
-        // AynÃƒâ€Ã‚Â± isimde makine parÃƒÆ’Ã‚Â§asÃƒâ€Ã‚Â± var mÃƒâ€Ã‚Â± kontrol et
+        // Aynı isimde makine parçası var mı kontrol et
         InventoryItem existing = null;
         for (int i = 0; i < machineParts.Count; i++)
         {
@@ -418,26 +422,26 @@ public class InventoryManager : MonoBehaviour
 
         if (existing != null)
         {
-            // Mevcut parÃƒÆ’Ã‚Â§anÃƒâ€Ã‚Â±n sayÃƒâ€Ã‚Â±sÃƒâ€Ã‚Â±nÃƒâ€Ã‚Â± artÃƒâ€Ã‚Â±r
+            // Mevcut parçanın sayısını artır
             existing.count += amount;
             Debug.Log($"[InventoryManager] Makine parcasi sayisi artirildi: '{existing.itemName}' x{existing.count}");
         }
         else
         {
-            // Kapasite kontrolÃƒÆ’Ã‚Â¼
+            // Kapasite kontrolü
             if (machineParts.Count >= MAX_MACHINE_PARTS_CAPACITY)
             {
                 Debug.LogWarning("[InventoryManager] Asi parcalari listesi dolu! Parca eklenemedi: " + name);
                 return false;
             }
 
-            // Yeni makine parÃƒÆ’Ã‚Â§asÃƒâ€Ã‚Â± oluÃƒâ€¦Ã…Â¸tur
+            // Yeni makine parçası oluştur
             InventoryItem newPart = new InventoryItem(ItemType.MachinePart, name, icon, amount);
             machineParts.Add(newPart);
             Debug.Log($"[InventoryManager] Yeni makine parcasi eklendi: '{name}' x{amount}");
         }
 
-        // Mevcut zanaat sistemi ile uyumluluk iÃƒÆ’Ã‚Â§in GameManager'a bildir
+        // Mevcut zanaat sistemi ile uyumluluk için GameManager'a bildir
         if (GameManager.instance != null)
         {
             GameManager.instance.EsyaToplandi();
@@ -453,13 +457,13 @@ public class InventoryManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Makine parÃƒÆ’Ã‚Â§asÃƒâ€Ã‚Â± listesinden parÃƒÆ’Ã‚Â§a ÃƒÆ’Ã‚Â§Ãƒâ€Ã‚Â±karÃƒâ€Ã‚Â±r (ilk bulunan parÃƒÆ’Ã‚Â§adan).
+    /// Makine parçası listesinden parça çıkarır (ilk bulunan parçadan).
     /// </summary>
-    /// <param name="amount">ÃƒÆ’Ã¢â‚¬Â¡Ãƒâ€Ã‚Â±karÃƒâ€Ã‚Â±lacak miktar.</param>
-    /// <returns>ÃƒÆ’Ã¢â‚¬Â¡Ãƒâ€Ã‚Â±karma baÃƒâ€¦Ã…Â¸arÃƒâ€Ã‚Â±lÃƒâ€Ã‚Â±ysa true.</returns>
+    /// <param name="amount">Çıkarılacak miktar.</param>
+    /// <returns>Çıkarma başarılıysa true.</returns>
     private bool RemoveMachinePart(int amount)
     {
-        // Toplam makine parÃƒÆ’Ã‚Â§asÃƒâ€Ã‚Â± sayÃƒâ€Ã‚Â±sÃƒâ€Ã‚Â±nÃƒâ€Ã‚Â± hesapla
+        // Toplam makine parçası sayısını hesapla
         int totalParts = GetMachinePartCount();
 
         if (totalParts < amount)
@@ -470,7 +474,7 @@ public class InventoryManager : MonoBehaviour
 
         int remaining = amount;
 
-        // Ãƒâ€Ã‚Â°lk parÃƒÆ’Ã‚Â§alardan baÃƒâ€¦Ã…Â¸layarak ÃƒÆ’Ã‚Â§Ãƒâ€Ã‚Â±kar
+        // İlk parçalardan başlayarak çıkar
         for (int i = machineParts.Count - 1; i >= 0 && remaining > 0; i--)
         {
             if (machineParts[i].count <= remaining)
@@ -491,9 +495,9 @@ public class InventoryManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Toplam makine parÃƒÆ’Ã‚Â§asÃƒâ€Ã‚Â± sayÃƒâ€Ã‚Â±sÃƒâ€Ã‚Â±nÃƒâ€Ã‚Â± dÃƒÆ’Ã‚Â¶ndÃƒÆ’Ã‚Â¼rÃƒÆ’Ã‚Â¼r.
+    /// Toplam makine parçası sayısını döndürür.
     /// </summary>
-    /// <returns>TÃƒÆ’Ã‚Â¼m makine parÃƒÆ’Ã‚Â§alarÃƒâ€Ã‚Â±nÃƒâ€Ã‚Â±n toplam sayÃƒâ€Ã‚Â±sÃƒâ€Ã‚Â±.</returns>
+    /// <returns>Tüm makine parçalarının toplam sayısı.</returns>
     private int GetMachinePartCount()
     {
         int total = 0;
@@ -504,14 +508,14 @@ public class InventoryManager : MonoBehaviour
         return total;
     }
 
-    // ==================== YardÃƒâ€Ã‚Â±mcÃƒâ€Ã‚Â± YÃƒÆ’Ã‚Â¶ntemler ====================
+    // ==================== Yardımcı Yöntemler ====================
 
     /// <summary>
-    /// Verilen listede belirtilen tÃƒÆ’Ã‚Â¼rde eÃƒâ€¦Ã…Â¸ya arar.
+    /// Verilen listede belirtilen türde eşya arar.
     /// </summary>
-    /// <param name="list">Aranacak eÃƒâ€¦Ã…Â¸ya listesi.</param>
-    /// <param name="type">Aranan eÃƒâ€¦Ã…Â¸ya tÃƒÆ’Ã‚Â¼rÃƒÆ’Ã‚Â¼.</param>
-    /// <returns>Bulunan eÃƒâ€¦Ã…Â¸ya veya null.</returns>
+    /// <param name="list">Aranacak eşya listesi.</param>
+    /// <param name="type">Aranan eşya türü.</param>
+    /// <returns>Bulunan eşya veya null.</returns>
     private InventoryItem FindItemByType(List<InventoryItem> list, ItemType type)
     {
         for (int i = 0; i < list.Count; i++)
