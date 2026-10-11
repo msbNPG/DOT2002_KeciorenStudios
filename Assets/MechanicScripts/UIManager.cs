@@ -21,11 +21,24 @@ public class UIManager : MonoBehaviour
     public GameObject inventoryPanel;
     public GameObject gameplayHUD;
 
+    [Header("Ayarlar")]
+    [Tooltip("Ayarlar panelindeki ses seviyesi slider'i (0-1)")]
+    public UnityEngine.UI.Slider volumeSlider;
+
     [Header("Durumlar")]
     public bool isGameStarted = false;
     public bool isPaused = false;
     public bool isFailed = false;
     public bool isInventoryOpen = false;
+    public bool isGameOver = false;
+
+    // Sahne yeniden yuklenince ana menu yerine dogrudan oyunu baslat (Tekrar Dene)
+    private static bool startGameOnLoad = false;
+
+    // Ayarlar kapaninca pause menusune mi ana menuye mi donulecek
+    private bool settingsOpenedFromPause = false;
+
+    private const string VolumePrefKey = "MasterVolume";
 
     private void Awake()
     {
@@ -41,17 +54,31 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        // Oyun ba��nda e�er do�rudan bir oynan�� sahnesinde de�ilsek ana men�y� g�ster
-        if (!isGameStarted)
+        // Kayitli ses seviyesini uygula ve slider'a bagla
+        AudioListener.volume = PlayerPrefs.GetFloat(VolumePrefKey, 1f);
+        if (volumeSlider != null)
         {
+            volumeSlider.SetValueWithoutNotify(AudioListener.volume);
+            volumeSlider.onValueChanged.AddListener(SetVolume);
+        }
+
+        // Tekrar Dene ile yuklendiysek menuyu atla
+        if (startGameOnLoad)
+        {
+            startGameOnLoad = false;
+            StartGame();
+        }
+        else if (!isGameStarted)
+        {
+            // Oyun basinda ana menuyu goster
             ShowMainMenu();
         }
     }
 
     private void Update()
     {
-        // Oldu ise hicbir tus isleme
-        if (isFailed) return;
+        // Olduyse veya kazandiysa hicbir tus isleme
+        if (isFailed || isGameOver) return;
 
         Keyboard kb = Keyboard.current;
         if (kb == null) return;
@@ -63,6 +90,18 @@ public class UIManager : MonoBehaviour
             if (isInventoryOpen)
             {
                 ToggleInventory();
+                return;
+            }
+
+            // Ayarlar / istatistik ekranindan geri don
+            if (settingsPanel != null && settingsPanel.activeSelf)
+            {
+                CloseSettings();
+                return;
+            }
+            if (statsPanel != null && statsPanel.activeSelf)
+            {
+                ShowMainMenu();
                 return;
             }
 
@@ -100,10 +139,39 @@ public class UIManager : MonoBehaviour
 
     public void ShowSettings()
     {
+        // Panel yoksa ekrani bos birakip oyuncuyu kilitleme
+        if (settingsPanel == null)
+        {
+            Debug.LogWarning("[UIManager] Settings paneli atanmamis!");
+            return;
+        }
+
+        settingsOpenedFromPause = isPaused;
         HideAllPanels();
         SetPanelActive(settingsPanel, true);
         Time.timeScale = 0f;
         UnlockCursor();
+    }
+
+    /// <summary>
+    /// Ayarlar panelini kapatir ve acildigi yere (pause veya ana menu) doner.
+    /// </summary>
+    public void CloseSettings()
+    {
+        if (settingsOpenedFromPause)
+        {
+            ShowPause();
+        }
+        else
+        {
+            ShowMainMenu();
+        }
+    }
+
+    public void SetVolume(float volume)
+    {
+        AudioListener.volume = volume;
+        PlayerPrefs.SetFloat(VolumePrefKey, volume);
     }
 
     public void ShowStats()
@@ -120,20 +188,13 @@ public class UIManager : MonoBehaviour
             {
                 RunData data = RunManager.Instance.currentData;
 
-                string rTimeStr = "Hic Bitirilmedi";
-                if (data.fastestWinTime > 0)
-                {
-                    int rMin = Mathf.FloorToInt(data.fastestWinTime / 60F);
-                    int rSec = Mathf.FloorToInt(data.fastestWinTime - rMin * 60);
-                    rTimeStr = string.Format("{0:00}:{1:00}", rMin, rSec);
-                }
+                string rTimeStr = data.fastestWinTime > 0 ? FormatTime(data.fastestWinTime) : "—";
 
-                statsText.text = "=== KURESEL ISTATISTIKLER ===\n\n" +
-                                 "Toplam Zombi: " + data.totalZombieKills + "\n" +
-                                 "Zombiden Olme (Can): " + data.deathByHealth + "\n" +
-                                 "Acliktan Olme: " + data.deathByHunger + "\n" +
-                                 "Susuzluktan Olme: " + data.deathByThirst + "\n" +
-                                 "En Iyi Sure (Rekor): " + rTimeStr;
+                statsText.text = StatLine("Öldürülen zombi", data.totalZombieKills.ToString()) +
+                                 StatLine("Zombi yüzünden ölüm", data.deathByHealth.ToString()) +
+                                 StatLine("Açlıktan ölüm", data.deathByHunger.ToString()) +
+                                 StatLine("Susuzluktan ölüm", data.deathByThirst.ToString()) +
+                                 StatLine("En iyi süre", rTimeStr).TrimEnd('\n');
             }
         }
     }
@@ -166,24 +227,18 @@ public class UIManager : MonoBehaviour
     {
         HideAllPanels();
         SetPanelActive(victoryPanel, true);
+        isGameOver = true;
 
         if (victoryPanel != null)
         {
             UnityEngine.UI.Text statsText = FindOrCreateChildText(victoryPanel, "WinStatsText");
             if (statsText != null)
             {
-                int minutes = Mathf.FloorToInt(time / 60F);
-                int seconds = Mathf.FloorToInt(time - minutes * 60);
-                string timeStr = string.Format("{0:00}:{1:00}", minutes, seconds);
-
-                statsText.text = "SURE: " + timeStr + "\nZOMBI SKORU: " + kills;
+                statsText.text = "Süre: " + FormatTime(time) + "\nÖldürülen zombi: " + kills;
 
                 if (RunManager.Instance != null && RunManager.Instance.currentData.fastestWinTime > 0)
                 {
-                    int rMin = Mathf.FloorToInt(RunManager.Instance.currentData.fastestWinTime / 60F);
-                    int rSec = Mathf.FloorToInt(RunManager.Instance.currentData.fastestWinTime - rMin * 60);
-                    string rTimeStr = string.Format("{0:00}:{1:00}", rMin, rSec);
-                    statsText.text += "\nEN IYI SURE: " + rTimeStr;
+                    statsText.text += "\nEn iyi süre: " + FormatTime(RunManager.Instance.currentData.fastestWinTime);
                 }
             }
         }
@@ -194,13 +249,53 @@ public class UIManager : MonoBehaviour
 
     public void ShowFailed()
     {
+        ShowFailed(null);
+    }
+
+    /// <summary>
+    /// Basarisiz ekranini gosterir. reason: PlayerSurvivalStats.DeathReason* sabitlerinden biri.
+    /// </summary>
+    public void ShowFailed(string reason)
+    {
         HideAllPanels();
         SetPanelActive(failedPanel, true);
+
+        if (failedPanel != null)
+        {
+            UnityEngine.UI.Text reasonText = FindOrCreateChildText(failedPanel, "FailedReasonText");
+            if (reasonText != null)
+            {
+                reasonText.text = GetDeathMessage(reason);
+            }
+        }
 
         isFailed = true;
         Time.timeScale = 0f;
         UnlockCursor();
         DisablePlayerMovement();
+    }
+
+    private static string GetDeathMessage(string reason)
+    {
+        switch (reason)
+        {
+            case PlayerSurvivalStats.DeathReasonHealth: return "Zombiler seni yakaladı.";
+            case PlayerSurvivalStats.DeathReasonHunger: return "Açlıktan öldün.";
+            case PlayerSurvivalStats.DeathReasonThirst: return "Susuzluktan öldün.";
+            default: return "Hayatta kalamadın.";
+        }
+    }
+
+    private static string StatLine(string label, string value)
+    {
+        return "<color=#8C948F>" + label + "</color>    <b>" + value + "</b>\n";
+    }
+
+    private static string FormatTime(float seconds)
+    {
+        int minutes = Mathf.FloorToInt(seconds / 60f);
+        int secs = Mathf.FloorToInt(seconds - minutes * 60);
+        return string.Format("{0:00}:{1:00}", minutes, secs);
     }
 
     // ========================
@@ -215,6 +310,7 @@ public class UIManager : MonoBehaviour
         isGameStarted = true;
         isPaused = false;
         isFailed = false;
+        isGameOver = false;
         isInventoryOpen = false;
 
         Time.timeScale = 1f;
@@ -238,16 +334,29 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Bolumu sifirdan yukler ve menuyu atlayip dogrudan oyunu baslatir.
+    /// </summary>
     public void RestartLevel()
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        startGameOnLoad = true;
+        ReloadActiveScene();
     }
 
+    /// <summary>
+    /// Bolumu sifirdan yukler ve ana menuyu gosterir (envanter, sure, zombi durumu sifirlanir).
+    /// </summary>
     public void GoToMainMenu()
     {
+        startGameOnLoad = false;
+        ReloadActiveScene();
+    }
+
+    private void ReloadActiveScene()
+    {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(0);
+        // buildIndex yerine isim: sahne build listesinde farkli sirada olabilir
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void QuitGame()
@@ -353,11 +462,12 @@ public class UIManager : MonoBehaviour
     /// </summary>
     private UnityEngine.UI.Text FindOrCreateChildText(GameObject panel, string childName)
     {
-        foreach (Transform child in panel.transform)
+        // Panel icindeki kart/alt objelerde de ara
+        foreach (UnityEngine.UI.Text existing in panel.GetComponentsInChildren<UnityEngine.UI.Text>(true))
         {
-            if (child.name == childName)
+            if (existing.name == childName)
             {
-                return child.GetComponent<UnityEngine.UI.Text>();
+                return existing;
             }
         }
 

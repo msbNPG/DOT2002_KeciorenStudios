@@ -21,7 +21,7 @@ public class CraftingStation : MonoBehaviour
         if (GameManager.instance.toplananEsya >= GameManager.instance.gerekenEsya)
         {
             // KAZANMA DURUMU
-            string mesaj = "TEBRIKLER! ASIYI URETTIN VE DUNYAYI KURTARDIN!";
+            string mesaj = "TEBRİKLER! AŞIYI ÜRETTİN!";
             Debug.Log(mesaj);
             GameManager.instance.ShowPopupText(mesaj, Color.green);
             
@@ -32,7 +32,7 @@ public class CraftingStation : MonoBehaviour
         {
             // EKSİK PARCA DURUMU
             int eksik = GameManager.instance.gerekenEsya - GameManager.instance.toplananEsya;
-            string mesaj = "Asiyi tamamlamak icin " + eksik + " parcaya daha ihtiyacin var!";
+            string mesaj = "Aşıyı tamamlamak için " + eksik + " parça daha lazım";
             Debug.Log(mesaj);
             
             // Ekranda goster (Kirmizi renk ile uyari)

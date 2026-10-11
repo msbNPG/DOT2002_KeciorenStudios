@@ -74,7 +74,7 @@ public class KillScript : MonoBehaviour
         // 4. Sahnedeki ilk gecerli kamerayi bul
         if (playerCamera == null)
         {
-            playerCamera = Object.FindFirstObjectByType<Camera>();
+            playerCamera = Object.FindAnyObjectByType<Camera>();
         }
     }
 }

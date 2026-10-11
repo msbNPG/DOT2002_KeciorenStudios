@@ -21,6 +21,9 @@ public class GameManager : MonoBehaviour
     [Tooltip("Yazinin ekranda kac saniye kalacagi")]
     public float yaziEkrandaKalmaSuresi = 2f;
 
+    [Tooltip("HUD'da surekli gorunen 'Asi Parcalari 0/5' sayaci (opsiyonel)")]
+    public Text asiSayaciText;
+
     [Header("Anlik Oyun (Run) Istatistikleri")]
     public int currentRunZombieKills = 0;
     public float runTimer = 0f;
@@ -74,6 +77,15 @@ public class GameManager : MonoBehaviour
         {
             asiMiktariText.text = "";
         }
+
+        UpdateAsiSayaci();
+    }
+
+    private void UpdateAsiSayaci()
+    {
+        if (asiSayaciText == null) return;
+        asiSayaciText.text = toplananEsya + " / " + gerekenEsya;
+        asiSayaciText.color = toplananEsya >= gerekenEsya ? new Color(0.55f, 0.9f, 0.4f) : Color.white;
     }
 
     void Update()
@@ -93,16 +105,17 @@ public class GameManager : MonoBehaviour
         if (toplananEsya < gerekenEsya)
         {
             toplananEsya++;
+            UpdateAsiSayaci();
             Debug.Log("[GameManager] Asi Parcasi Toplandi: " + toplananEsya + " / " + gerekenEsya);
 
             if (toplananEsya >= gerekenEsya)
             {
                 Debug.Log("[GameManager] BUTUN PARCALARI TOPLADIM ARTIK ASIYI URETEBILIRIM!");
-                ShowPopupText(toplananEsya + "/" + gerekenEsya + " ASI PARCASI BULUNDU! MASAYA GIT!", Color.green);
+                ShowPopupText("TÜM AŞI PARÇALARI TOPLANDI! AŞI İSTASYONUNA GİT", new Color(0.55f, 0.9f, 0.4f));
             }
             else
             {
-                ShowPopupText(toplananEsya + "/" + gerekenEsya + " ASI PARCASI BULUNDU!", Color.yellow);
+                ShowPopupText("AŞI PARÇASI BULUNDU  " + toplananEsya + " / " + gerekenEsya, new Color(1f, 0.85f, 0.35f));
             }
         }
     }
@@ -130,6 +143,8 @@ public class GameManager : MonoBehaviour
 
     public void GameWon()
     {
+        // Istasyona tekrar basinca ikinci kez kazanilmasin
+        if (isGameWon) return;
         isGameWon = true;
 
         if (RunManager.Instance != null)

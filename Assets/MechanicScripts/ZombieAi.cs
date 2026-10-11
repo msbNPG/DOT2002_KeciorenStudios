@@ -43,6 +43,7 @@ public class ZombieAI : MonoBehaviour
 
     private Transform player;
     private CharacterController playerController;
+    private Rigidbody playerRigidbody;
     private NavMeshAgent agent;
     private Animator animator;
     private bool isDead = false;
@@ -99,6 +100,8 @@ public class ZombieAI : MonoBehaviour
         if (agent != null)
         {
             agent.speed = moveSpeed;
+            // Hedef oyuncu pozisyonu oldugu icin durma mesafesi olmazsa zombi oyuncunun icine yurur
+            agent.stoppingDistance = Mathf.Max(agent.stoppingDistance, attackRange * 0.8f);
             startPosition = transform.position;
 
             // NavMesh uzerinde degilse en yakin NavMesh noktasina oturt
@@ -117,6 +120,8 @@ public class ZombieAI : MonoBehaviour
         {
             player = playerObj.transform;
             playerController = playerObj.GetComponent<CharacterController>();
+            // LPSP karakteri CharacterController degil Rigidbody ile hareket eder
+            playerRigidbody = playerObj.GetComponent<Rigidbody>();
         }
 
         // Ilk devriye noktasini sec
@@ -150,6 +155,18 @@ public class ZombieAI : MonoBehaviour
         if (isDead || player == null) return;
         if (agent == null || !agent.isOnNavMesh) return;
 
+        // Oyuncu oldukten sonra saldirmayi birak, devriyeye don
+        if (PlayerSurvivalStats.Instance != null && PlayerSurvivalStats.Instance.IsDead())
+        {
+            if (currentState != ZombieState.Patrol)
+            {
+                currentState = ZombieState.Patrol;
+                SetRandomPatrolDestination();
+            }
+            UpdatePatrol();
+            return;
+        }
+
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
         // Ayak sesi algilama (Karakter hareket ediyorsa ve duyma mesafesindeyse)
@@ -157,8 +174,8 @@ public class ZombieAI : MonoBehaviour
         {
             if (distanceToPlayer <= hearingRange)
             {
-                // Player'in CharacterController'i varsa ve velocity buyuklugu 0.1'den fazlaysa hareket ediyordur.
-                if (playerController != null && playerController.velocity.magnitude > 0.1f)
+                // Player'in hizi 0.1'den fazlaysa hareket ediyordur.
+                if (GetPlayerSpeed() > 0.1f)
                 {
                     currentState = ZombieState.Chase;
                 }
@@ -188,6 +205,18 @@ public class ZombieAI : MonoBehaviour
                 UpdateAttack();
                 break;
         }
+    }
+
+    private float GetPlayerSpeed()
+    {
+        if (playerController != null) return playerController.velocity.magnitude;
+        if (playerRigidbody != null)
+        {
+            // Dusme/ziplama sesini sayma, sadece yatay hareket
+            Vector3 v = playerRigidbody.linearVelocity;
+            return new Vector2(v.x, v.z).magnitude;
+        }
+        return 0f;
     }
 
     void UpdatePatrol()

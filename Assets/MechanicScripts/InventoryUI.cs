@@ -86,23 +86,24 @@ public class InventoryUI : MonoBehaviour
                 // Bu slotta bir esya var, bilgileri goster
                 InventoryItem item = items[i];
 
-                // Ikonu goster
+                // Ikonu goster (ikonu olmayan esyada bos beyaz kare cizme)
                 if (iconImage != null)
                 {
                     iconImage.sprite = item.icon;
-                    iconImage.enabled = true;
+                    iconImage.enabled = item.icon != null;
                     iconImage.color = Color.white;
                 }
 
                 // Miktar yazisini guncelle
+                string label = GetSlotLabel(item);
                 if (countText != null)
                 {
-                    countText.text = item.count > 1 ? item.count.ToString() : "";
+                    countText.text = label;
                     countText.enabled = true;
                 }
                 else if (countTextLegacy != null)
                 {
-                    countTextLegacy.text = item.count > 1 ? item.count.ToString() : "";
+                    countTextLegacy.text = label;
                     countTextLegacy.enabled = true;
                 }
 
@@ -157,8 +158,26 @@ public class InventoryUI : MonoBehaviour
                     slotButton.interactable = false;
                     slotButton.onClick.RemoveAllListeners();
                 }
+
+                // Bos slotta eski tiklama handler'lari kalmasin
+                SlotRightClick staleHandler = slotTransform.GetComponent<SlotRightClick>();
+                if (staleHandler != null)
+                {
+                    staleHandler.onLeftClick = null;
+                    staleHandler.onRightClick = null;
+                }
             }
         }
+    }
+
+    /// <summary>
+    /// Slot alt yazisi: ikonu olan esyada sadece adet, ikonsuz esyada isim + adet.
+    /// </summary>
+    private static string GetSlotLabel(InventoryItem item)
+    {
+        string countStr = item.count > 1 ? "x" + item.count : "";
+        if (item.icon != null) return countStr;
+        return item.count > 1 ? item.itemName + " " + countStr : item.itemName;
     }
 
     /// <summary>
@@ -198,19 +217,20 @@ public class InventoryUI : MonoBehaviour
                 if (iconImage != null)
                 {
                     iconImage.sprite = part.icon;
-                    iconImage.enabled = true;
+                    iconImage.enabled = part.icon != null;
                     iconImage.color = Color.white;
                 }
 
                 // Miktar yazisini guncelle
+                string label = GetSlotLabel(part);
                 if (countText != null)
                 {
-                    countText.text = part.count > 1 ? part.count.ToString() : "";
+                    countText.text = label;
                     countText.enabled = true;
                 }
                 else if (countTextLegacy != null)
                 {
-                    countTextLegacy.text = part.count > 1 ? part.count.ToString() : "";
+                    countTextLegacy.text = label;
                     countTextLegacy.enabled = true;
                 }
 
